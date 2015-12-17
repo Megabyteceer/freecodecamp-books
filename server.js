@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').load();
+
 var express = require('express');
 var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
@@ -8,9 +10,7 @@ var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 
 var app = express();
-require('dotenv').load();
 require('./app/config/passport')(passport);
-
 mongoose.connect(process.env.MONGO_URI);
 
 app.use('/controllers', express.static(process.cwd() + '/app/controllers'));

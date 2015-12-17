@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 
-<html ng-app="megabyte.night-life">
+<html ng-app="megabyte.books-club">
 
 	<head>
-		<title>Night life. Users-profile</title>
-		<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+		<title>Books-trading-club. Users-profile</title>
+		<link href='https://fonts.googleapis.com/css?family=Overlock:700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
 		<link rel="SHORTCUT ICON" href="favicon.ico" type="image/x-icon">
@@ -13,14 +13,13 @@
 
 	<body>
 		<div id="body">
-		<div class="container"  ng-controller="UserController as user" ng-cloak>
+		<div class="container" ng-controller="UserController as user" ng-cloak>
 			<div class="row">
 				<div ng-show="user.data" class="col-sm-4 col-sm-offset-4 text-center">
 					<img src="/public/img/gh-mark-32px.png" alt="github logo" /><br>
 					<span>ID: </span>{{user.data.id}}<br>
 					<span>Display Name: </span>{{user.data.displayName}}<br>
 					<a class="menu" href="/">Home</a>
-					|
 					<a class="menu" href="/logout">Logout</a>
 				</div>
 			</div>
@@ -28,7 +27,7 @@
 		</div>
 		
 		<div class="footer flext-center-center">
-			<a href="http://codepen.io/Megabyteceer/full/xwzMej/">Vasiliy Kostin</a>, fullstack, nodejs, angular, <a href="http://www.yelp.com/" target="_blank"> yelp API <img src="public/img/yelp_logo_small.png"></a>
+			<a href="http://codepen.io/Megabyteceer/full/xwzMej/">Vasiliy Kostin</a>, fullstack, nodejs, angular, google-books-API
 		</div>
 	
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

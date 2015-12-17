@@ -1,121 +1,189 @@
 <!DOCTYPE html>
 
-<html ng-app="megabyte.night-life">
+<html ng-app="megabyte.books-club">
 
 	<head>
-		<title>Night-life</title>
-		<link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+		<title>Books-trading-club</title>
+		<link href='https://fonts.googleapis.com/css?family=Overlock:700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<link href="/public/css/main.css" rel="stylesheet" type="text/css">
-		<link href="/public/css/timer.css" rel="stylesheet" type="text/css">
+		<link href="/public/css/loader.css" rel="stylesheet" type="text/css">
 		<link rel="SHORTCUT ICON" href="favicon.ico" type="image/x-icon">
 		<link rel="icon" type="image/ico" href="favicon.ico">
-
 	</head>
-
+	
 	<body>
+	
 	<div id="body">
 		<div class="container header flext-center-center" ng-controller="UserController as user" ng-cloak>
-			<div ng-show="user.data.displayName" class="text-center">
+			<div ng-show="user.data.id" class="text-center">
 				Welcome, {{user.data.displayName}}!<br>
-				<a class="menu" href="/profile">Profile</a> | 
-				<a class="menu" href="/logout">Logout</a>
+				<a href="/profile">Profile</a> | 
+				<a href="/logout">Logout</a>
 			</div>
 			
-			<div ng-show="!user.data.displayName" class="text-center">
+			<div ng-show="!user.data.id" class="text-center">
 				please, 
-				<a class="menu" href="/login">Login</a>
-				to say about your goings.
+				<a id="loginlink" ng-href="{{user.loginLink}}">Login</a>
+				to say about your books.
 			</div>
 		</div>
 		
 		<app-title></app-title>
 		
-
-		
-		<div class="container" ng-controller="PlaceController as controller" ng-cloak>
-				
-				<div class="row">
-					<div class="col-md-offset-3 col-md-6">
-						<input ng-change="controller.searchChanged()" ng-model-options="{debounce:1000}" class="form-control" type="text" ng-model="controller.whereYou" placeholder="where you at?">
-				    </div>
-			    </div>
-			    <div class="container flext-center-center">
-				    <div ng-show="controller.showLoaderPic" class="timer-loader">
-						  Loading…
-					</div>
-				</div>
-				<div class="places-container" ng-class="controller.containerClass">
-					
-
-					
-					<div class="row" ng ng-repeat="place in controller.places">
-						<div class="col-md-offset-2 col-md-8">
-							<div class="place row">
-								<div class="col-md-3 text-center">
-										<a target="_blank" href="{{place.url}}">
-											<img class="place-pic" src="{{place.image_url}}">
-										</a>
-										<br>
-										<img src="{{place.rating_img_url}}">
-								</div>
-								<div class="col-md-9">
-										<a target="_blank" href="{{place.url}}">
-											<span class="place-title">{{place.name}}</span>
-										</a>
-										<br>
-										<span class="place-adr">{{place.adr}}</span>
-										<br>
-										{{place.snippet_text}}
-										
-								</div>
-								<button ng-click="controller.goingClick(place)" class="btn btn-xs btn-primary pull-right btn-going"><span class="badge">{{place.going}}</span> going</button>
+		<div class="container" ng-controller="BooksController as controller" ng-cloak>
+			
+			
+			<div>
+			
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-search"></span> All books</a></li>
+			    <li ng-show="loggedIn" role="presentation">
+			    	<a href="#your" aria-controls="your" role="tab" data-toggle="tab">
+			    		<span class="glyphicon glyphicon-book"></span> Your books <span class="badge" ng-show="controller.approvNeedCount>0">{{controller.approvNeedCount}}</span>
+			    	</a>
+			    </li>
+			    <li ng-hide="loggedIn"><a class='link-to-login' href="#"><span class="glyphicon glyphicon-book"></span> Your books (login)</a></li>
+			    <li ng-show="loggedIn" role="presentation"><a href="#want" aria-controls="want" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-hourglass"></span> Books you borrow</a></li>
+			  </ul>
+			
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			    <div role="tabpanel" class="tab-pane fade in active" id="all">
+			    	<div ng-hide="controller.allBooks.length" class="books-tab row flext-center-center no-yet-message">
+			    		No books yet
+			    	</div>
+			    	<div ng-show="controller.allBooks.length" class="books-tab">
+			    		<div class="book btn"ng-repeat="book in controller.allBooks" alt="{{book.title}} ({{book.author}})">
+							<img class="book-pic" ng-src="{{book.imgUrl}}">
+							<div class="btn-book">
+								<button ng-click="controller.borrowBook(book)" class='btn btn-xs btn-primary'><span class="glyphicon glyphicon-hourglass"></span> borrow book</button>
 							</div>
-					    </div>
-				    </div>
-				</div>
+						</div>
+			    	</div>
+			    	
+			    </div>
+			    <div role="tabpanel" class="tab-pane fade out" id="want">
+			    	<div ng-hide="controller.wantBooks.length" class="books-tab row flext-center-center no-yet-message">
+			    		No books you want yet
+			    	</div>
+			    	<div ng-show="controller.wantBooks.length" class="books-tab">
+			    		<div class="book btn"ng-repeat="book in controller.wantBooks" alt="{{book.title}} ({{book.author}})">
+							<img class="book-pic" ng-src="{{book.imgUrl}}">
+							
+							<div class="btn-book">
+								
+								<div ng-hide="book.borrowApproved" class="book-notify">Await for approve
+									<br>
+									<button ng-click="controller.returnBook(book)" class='btn btn-xs btn-warning'><span class="glyphicon glyphicon-remove"></span> don't want</button>
+								</div>
+								<button ng-show="book.borrowApproved" ng-click="controller.returnBook(book)" class='btn btn-xs btn-success'><span class="glyphicon glyphicon-ok"></span> return book</button>
+								
+							</div>
+						</div>
+			    	</div>
+			    	
+			    </div>
+			    <div role="tabpanel" class="tab-pane fade" id="your">
+			    	
+			    	<div ng-hide="controller.myBooks.length" class="books-tab row flext-center-center no-yet-message">
+			    		No books yet
+			    	</div>
+			    	<div ng-show="controller.myBooks.length" class="books-tab">
+			    		<div class="book btn"ng-repeat="book in controller.myBooks" alt="{{book.title}} ({{book.author}})">
+							<img class="book-pic" ng-src="{{book.imgUrl}}">
+							<div ng-show="book.borrowUserId" class="book-alert">
+								<span ng-show="book.borrowApproved" class="glyphicon glyphicon-alert text-success"></span>
+								<span ng-hide="book.borrowApproved" class="glyphicon glyphicon-alert text-danger"></span>
+							</div>
+							<div class="btn-book">
+								<div ng-show="book.borrowUserId">
+									<div ng-show="book.borrowApproved" class="book-notify">{{book.borrowUserName}} borrowing this book
+										<br>
+										<button ng-click="controller.refuseBook(book)" class='btn btn-xs btn-warning'><span class="glyphicon glyphicon-download"></span> get back</button>
+									</div>
+									<div ng-hide="book.borrowApproved" class="book-notify">{{book.borrowUserName}} wants to borrow this book
+										<br>
+										<button ng-click="controller.approveBook(book)" class='btn btn-xs btn-success'><span class="glyphicon glyphicon-ok"></span> approve</button>
+										<button ng-click="controller.refuseBook(book)" class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-remove"></span> refuse</button>
+									</div>
+								</div>
+								
+								<button ng-click="controller.deleteBook(book)" confirmation-needed="Remove book<br><b>{{book.title}}</b><br>from your library?" class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-trash"></span> remove book</button>
+							</div>
+						</div>
+			    	</div>
+			    	
+				    <div class="row">
+						<div class="col-xs-4 col-xs-offset-4">
+							<div class="finded-contaider">
+							<div ng-show="controller.findedBooks.length>0" class="finded-tip-container">
+								<div class="finded-tip" ng-click="controller.clickFinded(finded)" ng-repeat="finded in controller.findedBooks">
+									<img class="finded-pic" ng-src="{{finded.img}}"> <span class="finded-tip-code">{{finded.title}}:</span> ({{finded.authors}})
+								</div>
+								<br>
+								<button ng-click="controller.clearSearch()" class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-trash"></span> clear search results</button>
+							</div>
+		
+					      <label for="stock-name">add new book:</label> <input id="stock-name" class="form-control" ng-model="controller.newName" ng-change="controller.newNameChanged()" ng-model-options='{ debounce: 400 }' type="text" placeholder="add new book"/>
+						</div>	
+						</div>	
+					</div>
+				    	
+			    	
+			    </div>
+			  </div>
+			
+			</div>
+			
+	
+
+			
 		</div>
 	</div>
-
-	<div class="footer flext-center-center">
-		<a href="http://codepen.io/Megabyteceer/full/xwzMej/">Vasiliy Kostin</a>, fullstack, nodejs, angular, <a href="http://www.yelp.com/" target="_blank"> yelp API <img src="public/img/yelp_logo_small.png"></a>
-	</div>
 	
+	<div class="footer flext-center-center">
+		<a href="http://codepen.io/Megabyteceer/full/xwzMej/">Vasiliy Kostin</a>, fullstack, nodejs, angular, google-books-API
+	</div>
 		
-<!-- confirmation dialogue-->		
-<div id='confirmation-modal' class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="alert alert-danger">
-      <div class="row"><div class="col-xs-12">
-      	<h4 id="modal-confirm-title" class="text-center">A you sure?</h4>
-      	<hr>
-      </div></div>
-      <div class="row"><div class="col-xs-12">
-      	<div id="modal-confirm-text" class="text-center"></div>
-      </div></div>
-      <div class="row"><div class="col-xs-12">
-      	<hr>
-      	<div class="pull-right">
-	      <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-	      <button id="modal-confirm-btn" type="button" class="btn btn-danger">Yes</button>
-	    </div>
-      </div></div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-		
+	<!--loader-->
+	<div class="loader-frame">
+	  <div class="loader-subframe">
+		<div class="loader loader-l"></div>
+		<div class="loader"></div>
+		<div class="loader loader-r"></div> Loading...
+	  </div>
+	</div>
+			
+	<!-- confirmation dialogue-->		
+	<div id='confirmation-modal' class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog">
+	    <div class="alert alert-danger">
+	      <div class="row"><div class="col-xs-12">
+	      	<h4 id="modal-confirm-title" class="text-center">A you sure?</h4>
+	      	<hr>
+	      </div></div>
+	      <div class="row"><div class="col-xs-12">
+	      	<div id="modal-confirm-text" class="text-center"></div>
+	      </div></div>
+	      <div class="row"><div class="col-xs-12">
+	      	<hr>
+	      	<div class="pull-right">
+		      <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+		      <button id="modal-confirm-btn" type="button" class="btn btn-danger">Yes</button>
+		    </div>
+	      </div></div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
-
-
-
-		
-		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 		<script src="controllers/app.js"></script>
-		<script type="text/javascript" src="controllers/placeController.client.js"></script>
+		<script type="text/javascript" src="controllers/booksController.client.js"></script>
 
 		<script type="text/javascript" src="controllers/userController.client.js"></script>
 		

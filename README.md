@@ -1,4 +1,4 @@
-# freecodecamp_nightlife - learning project for freecodecamp.com
+# freecodecamp_books_trading_club - learning project for freecodecamp.com
 
 ## License
 

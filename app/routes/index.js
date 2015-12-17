@@ -1,7 +1,7 @@
 'use strict';
 
 var path = process.cwd();
-var PlaceHandler = require(path + '/app/controllers/placeHandler.server.js');
+var BooksHandler = require(path + '/app/controllers/booksHandler.server.js');
 
 module.exports = function (app, passport) {
 
@@ -13,7 +13,7 @@ module.exports = function (app, passport) {
 		}
 	}
 
-	var placeHandler = new PlaceHandler();
+	var booksHandler = new BooksHandler();
 
 
 	app.route('/')
@@ -58,6 +58,7 @@ module.exports = function (app, passport) {
 
 	app.route('/logout')
 		.get(function (req, res) {
+			req.session
 			req.logout();
 			res.redirect('/');
 		});
@@ -75,21 +76,34 @@ module.exports = function (app, passport) {
 	app.route('/auth/github')
 		.get(passport.authenticate('github'));
 
-	app.route('/auth/github/callback')
-		.get(passport.authenticate('github', {
-			successRedirect: '/',
-			failureRedirect: '/login'
-		}));
+	app.get('/auth/lastLoggedFrom', 
+		function (req, res){
+			res.json({provider:req.session.lastLoggedFrom});
+			
+		});
+
+	app.get('/auth/github/callback',
+	
+		passport.authenticate('github', { failureRedirect: '/login' }),
+			function(req, res) {
+			  	req.session.lastLoggedFrom = 'github';
+			  	req.session.save();
+			    res.redirect('/');
+			  });
+		
+		
 		
 	app.get('/auth/google',
 	  passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/plus.login' }));
 	
 	app.get('/auth/google/callback', 
-	  passport.authenticate('google', {
-	  	failureRedirect: '/login' }),
-	  function(req, res) {
-	    res.redirect('/');
-	  });
+	  passport.authenticate('google', {	failureRedirect: '/login' }),
+	  	function(req, res) {
+	  	
+		  	req.session.lastLoggedFrom = 'google';
+		  	req.session.save();
+		    res.redirect('/');
+		  });
 	  
 	app.get('/auth/twitter',
 	  passport.authenticate('twitter'));
@@ -97,14 +111,28 @@ module.exports = function (app, passport) {
 	app.get('/auth/twitter/callback', 
 	  passport.authenticate('twitter', { failureRedirect: '/login' }),
 	  function(req, res) {
+	  	req.session.lastLoggedFrom = 'twitter';
+	  	req.session.save();
 	    res.redirect('/');
 	  });
 
-
-
-	app.route('/api/place')
-		.get(placeHandler.getPlaces)
-		.post(placeHandler.postPlace)
+	app.route('/api/book/approve/:id')
+		.get(booksHandler.approveBook)
+		
+	app.route('/api/book/refuse/:id')
+		.get(booksHandler.refuseBook)
+		
+	app.route('/api/book/return/:id')
+		.get(booksHandler.returnBook)
+		
+	app.route('/api/book/:id')
+		.delete(booksHandler.deleteBook)
+		.post(booksHandler.borrowBook)
+		
+		
+	app.route('/api/book')
+		.get(booksHandler.getBooks)
+		.post(booksHandler.postBook)
 	
 
 };

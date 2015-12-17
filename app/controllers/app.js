@@ -1,7 +1,7 @@
 
 
 
-angular.module('megabyte.night-life', [])
+angular.module('megabyte.books-club', [])
 
 
 .directive('appTitle', function() {

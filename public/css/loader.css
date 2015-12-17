@@ -1,0 +1,58 @@
+.loader-frame{
+  background:#fff;
+  background:rgba(255,255,255,0.9);
+  padding:5px;
+  width:100%;
+  top:20px;
+  left:0;
+  position:fixed;
+  z-index:10000;
+  border-top:5px solid #aaa;
+  border-bottom:5px solid #aaa;
+  opacity:1.0;
+}
+
+.loader-subframe{
+    width:70px;
+    margin:auto;
+}
+
+.loader {
+  display:inline-block;
+  background:#6B7F8E;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.5s infinite ease-in-out;
+  animation: load7 1.5s infinite ease-in-out;
+}
+
+.loader-l {
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s;
+}
+.loader-r {
+   -webkit-animation-delay: 1.0s;
+  animation-delay: 1.0s;
+}
+
+@-webkit-keyframes load7 {
+  0%,
+  100% {
+   -webkit-transform:scale(1.0);
+  }
+  50% {
+    -webkit-transform:scale(0.2);
+  }
+}
+@keyframes load7 {
+  0%,
+  100% {
+    transform:scale(1.0);
+  }
+  50% {
+    transform:scale(0.2);
+  }
+}
