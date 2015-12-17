@@ -1,6 +1,16 @@
 body {
   color: #875713;
+  background-color: #DBCFBE;
+  background:url(
+  data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAMklEQVQIW2N8fOXg/4/P7zCAAL+kCphmvLJ77n9kARRBmARIFyNIO0gAZgRYJbogyFwAKRccwcUbxlkAAAAASUVORK5CYII=
+    ) repeat;
+  
+}
+
+.container{
   background: #EBDFCE;
+  padding-top:15px;
+  padding-bottom:15px;
 }
 
 html {
@@ -32,7 +42,6 @@ html {
 .app-title-pan {
   margin:0;
   font-family: 'Overlock', cursive;
-  margin-bottom: 20px;
   padding: 20px;
   background: #130904;
   color: #EBDFCE;
